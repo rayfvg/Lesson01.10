@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
         _currentBehaviour.Update();
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         PlayerMovement player = other.GetComponent<PlayerMovement>();
         if (player != null)

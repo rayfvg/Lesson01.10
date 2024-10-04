@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private Enemy _enemyBallPrefab;
+    [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private PlayerMovement _player;
 
     [SerializeField] private ParticleSystem _dieParticle;
@@ -11,75 +11,73 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private ReactionsToPlayer _reactionsToPlayer;
     [SerializeField] private BehaviorOfRest _restingsBehavior;
 
-    private Enemy _enemyBall;
+    private Enemy _enemy;
 
     private IBehaviour _iBehaviourIdle;
     private IBehaviour _iBehaviourTrigger;
 
-    private Transform[] _transformsList;
+    private List<Transform> _transformsListArray;
 
-    private Walker _walker;
-    private Patrol _patrul;
-    private Stay _stay;
-    private RunAwayFromPLayer _runAwayFromPLayer;
-    private RunAfterFromPlayer _runAfterFromPlayer;
-    private EnemyDie _enemyDie;
-
-    private void Awake()
+    public void StartSpawn()
     {
-        _enemyBall = Instantiate(_enemyBallPrefab, transform.position, Quaternion.identity);
+        _enemy = Instantiate(_enemyPrefab, transform.position, Quaternion.identity);
 
-        _transformsList = _enemyBall.GetComponentsInChildren<Transform>();
-        List<Transform> _transformsListArray = new List<Transform>();
-        foreach (Transform transform in _transformsList)
-        {
-            _transformsListArray.Add(transform);
-        }
+        _iBehaviourIdle = CreateIdleBehaviour(_enemy);
+        _iBehaviourTrigger = CreateTriggerBehaviour(_enemy);
 
-        _walker = new Walker(_enemyBall.transform, 8);
-        _patrul = new Patrol(_transformsListArray, _enemyBall.transform, 8);
-        _stay = new Stay();
-        _runAwayFromPLayer = new RunAwayFromPLayer(_player, _enemyBall.transform, 4);
-        _runAfterFromPlayer = new RunAfterFromPlayer(_player, _enemyBall.transform, 4);
-        _enemyDie = new EnemyDie(_dieParticle, _enemyBall.transform, _enemyBall.gameObject);
+        _enemy.Initialize(_iBehaviourIdle, _iBehaviourTrigger);
     }
-    private void Start()
-    {
-        if(_patrul != null)
-        {
-            _patrul.CreatQuene();
-        }
 
+    private IBehaviour CreateIdleBehaviour(Enemy enemy)
+    {
         switch (_restingsBehavior)
         {
             case BehaviorOfRest.Stay:
-                _iBehaviourIdle = _stay;
-                break;
+                return new Stay();
 
             case BehaviorOfRest.Walking:
-                _iBehaviourIdle = _walker;
-                break;
+                return new Walker(enemy.transform, 8);
 
             case BehaviorOfRest.Patrol:
-                _iBehaviourIdle = _patrul;
-                break;
-        }
 
+                Transform[] _transformsList = _enemy.gameObject.GetComponentsInChildren<Transform>();
+
+                _transformsListArray = new List<Transform>();
+                foreach (Transform transform in _transformsList)
+                {
+                    _transformsListArray.Add(transform);
+                }
+
+                Patrol _patrol = new Patrol(_transformsListArray, enemy.transform, 8);
+                _patrol.CreatQuene();
+                return _patrol;
+
+            default:
+                return null;
+        }
+    }
+
+    private IBehaviour CreateTriggerBehaviour(Enemy enemy)
+    {
         switch (_reactionsToPlayer)
         {
             case ReactionsToPlayer.RunAfterFromPlayer:
-                _iBehaviourTrigger = _runAfterFromPlayer;
-                break;
+                return new RunAfterFromPlayer(_player, enemy.transform, 4);
 
             case ReactionsToPlayer.RunAwayFromPlayer:
-                _iBehaviourTrigger = _runAwayFromPLayer;
-                break;
+                return new RunAwayFromPLayer(_player, enemy.transform, 4);
 
             case ReactionsToPlayer.Die:
-                _iBehaviourTrigger = _enemyDie;
-                break;
-        }
+                return new dieBehaviour(_dieParticle, enemy.transform, enemy.gameObject);
 
-        _enemyBall.Initialize(_iBehaviourIdle, _iBehaviourTrigger);
+            default:
+                return null;
+        }
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.F))
+            StartSpawn();
     }
 }

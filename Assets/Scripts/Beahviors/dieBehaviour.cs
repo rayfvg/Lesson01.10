@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyDie : IBehaviour
+public class dieBehaviour : IBehaviour
 {
     private bool _allowedCreate = true;
 
@@ -8,7 +8,7 @@ public class EnemyDie : IBehaviour
     private Transform _transform;
     private GameObject _thisEnemy;
 
-    public EnemyDie(ParticleSystem dieParticle, Transform transform, GameObject enemy)
+    public dieBehaviour(ParticleSystem dieParticle, Transform transform, GameObject enemy)
     {
         _dieParticle = dieParticle;
         _transform = transform;
