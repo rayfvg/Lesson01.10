@@ -6,9 +6,9 @@ public class EnemyDie : IReactionBehavior
 
     private ParticleSystem _dieParticle;
     private Transform _transform;
-    private EnemyBall _thisEnemy;
+    private GameObject _thisEnemy;
 
-    public EnemyDie(ParticleSystem dieParticle, Transform transform, EnemyBall enemy)
+    public EnemyDie(ParticleSystem dieParticle, Transform transform, GameObject enemy)
     {
         _dieParticle = dieParticle;
         _transform = transform;
@@ -19,13 +19,12 @@ public class EnemyDie : IReactionBehavior
     {
         if (_allowedCreate)
         {
-            _dieParticle.Play();
+            Object.Instantiate(_dieParticle, _transform.position, Quaternion.Euler(-90, 0, 0));
             _allowedCreate = false;
         }
 
         Object.Destroy(_thisEnemy);
 
         Debug.Log("Я взрываюсь при столкновении");
-
     }
 }

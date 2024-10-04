@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class RunAwayFromPLayer : IReactionBehavior
@@ -14,14 +13,9 @@ public class RunAwayFromPLayer : IReactionBehavior
         _speed = speed;
     }
 
-    public void Update()
-    {
-        ReactionBehaviour();
-    }
-
     public void ReactionBehaviour()
     {
-        Vector3 direction = _player.transform.position - _transform.position;
+        Vector3 direction = _transform.position - _player.transform.position;
 
         Vector3 normalizedDirection = direction.normalized;
 

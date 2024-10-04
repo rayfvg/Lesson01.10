@@ -5,11 +5,13 @@ public class EnemyBall : MonoBehaviour, Iidle, IReaction
     private IIdleBehaviour _idleBehaviour;
     private IReactionBehavior _reactionBehavior;
 
-    private bool _isReactions = true;
+    public bool _isReactions = true;
 
     public void Update()
     {
-        if(_isReactions)
+        if (_isReactions == false)
+            return;
+
         Idle();
     }
 

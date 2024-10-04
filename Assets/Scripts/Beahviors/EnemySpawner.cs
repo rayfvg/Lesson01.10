@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExampleSpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private EnemyBall _enemyBallPrefab;
     [SerializeField] private PlayerMovement _player;
@@ -9,7 +9,7 @@ public class ExampleSpawner : MonoBehaviour
     [SerializeField] private ParticleSystem _dieParticle;
 
     [SerializeField] private ReactionsToPlayer _reactionsToPlayer;
-    [SerializeField] private RestingsBehavior _restingsBehavior;
+    [SerializeField] private BehaviorOfRest _restingsBehavior;
 
     private EnemyBall _enemyBall;
 
@@ -19,50 +19,52 @@ public class ExampleSpawner : MonoBehaviour
     private Transform[] _transformsList;
 
     private Walker _walker;
-    private Patrul _patrul;
+    private Patrol _patrul;
     private Stay _stay;
     private RunAwayFromPLayer _runAwayFromPLayer;
-    private RunForPlayer _runForPlayer;
+    private RunAfterFromPlayer _runAfterFromPlayer;
     private EnemyDie _enemyDie;
+
     private void Awake()
     {
-        _transformsList = _enemyBallPrefab.GetComponentsInChildren<Transform>();
+        _enemyBall = Instantiate(_enemyBallPrefab, transform.position, Quaternion.identity);
+
+        _transformsList = _enemyBall.GetComponentsInChildren<Transform>();
         List<Transform> _transformsListArray = new List<Transform>();
         foreach (Transform transform in _transformsList)
         {
             _transformsListArray.Add(transform);
         }
 
-        
-        _walker = new Walker(_enemyBallPrefab.transform, 8);
-        _patrul = new Patrul(_transformsListArray, _enemyBallPrefab.transform, 8);
+        _walker = new Walker(_enemyBall.transform, 8);
+        _patrul = new Patrol(_transformsListArray, _enemyBall.transform, 8);
         _stay = new Stay();
-        _runAwayFromPLayer = new RunAwayFromPLayer(_player, _enemyBallPrefab.transform, 8);
-        _runForPlayer = new RunForPlayer(_player, _enemyBallPrefab.transform, 8);
-        _enemyDie = new EnemyDie(_dieParticle, _enemyBallPrefab.transform, _enemyBall);
+        _runAwayFromPLayer = new RunAwayFromPLayer(_player, _enemyBall.transform, 8);
+        _runAfterFromPlayer = new RunAfterFromPlayer(_player, _enemyBall.transform, 8);
+        _enemyDie = new EnemyDie(_dieParticle, _enemyBall.transform, _enemyBall.gameObject);
 
         switch (_restingsBehavior)
         {
-            case RestingsBehavior.Stay:
+            case BehaviorOfRest.Stay:
                 _idleBehaviour = _stay;
                 break;
 
-            case RestingsBehavior.Walking:
+            case BehaviorOfRest.Walking:
                 _idleBehaviour = _walker;
                 break;
 
-            case RestingsBehavior.Patrol:
+            case BehaviorOfRest.Patrol:
                 _idleBehaviour = _patrul;
                 break;
         }
 
         switch (_reactionsToPlayer)
         {
-            case ReactionsToPlayer.RunAfterPlayer:
-                _reactionBehavior = _runForPlayer;
+            case ReactionsToPlayer.RunAfterFromPlayer:
+                _reactionBehavior = _runAfterFromPlayer;
                 break;
 
-            case ReactionsToPlayer.EscapeFromPlayer:
+            case ReactionsToPlayer.RunAwayFromPlayer:
                 _reactionBehavior = _runAwayFromPLayer;
                 break;
 
@@ -71,8 +73,13 @@ public class ExampleSpawner : MonoBehaviour
                 break;
         }
 
-        _enemyBall = Instantiate(_enemyBallPrefab, transform.position, Quaternion.identity);
         _enemyBall.Initialize(_idleBehaviour, _reactionBehavior);
     }
-
+    private void Start()
+    {
+        if(_patrul != null)
+        {
+            _patrul.CreatQuene();
+        }
+    }
 }

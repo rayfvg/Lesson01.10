@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Patrul : IIdleBehaviour
+public class Patrol : IIdleBehaviour
 {
     private const float MinDistanceToTarget = 0.05f;
     private float _speed;
@@ -13,24 +13,12 @@ public class Patrul : IIdleBehaviour
     private Transform _transform;
     private PlayerMovement _player;
 
-    public Patrul(List<Transform> targets, Transform transform, float speed)
+    public Patrol(List<Transform> targets, Transform transform, float speed)
     {
         _targets = targets;
         _transform = transform;
         _speed = speed;
-    }
-
-    private void Awake()
-    {
-        _targetPositions = new Queue<Vector3>();
-
-        foreach (Transform target in _targets)
-            _targetPositions.Enqueue(target.position);
-
-        _currentTarget = _targetPositions.Dequeue();
-    }
-
-   
+    } 
 
     private void ProcessMoveTo(Vector3 direction)
     {
@@ -42,6 +30,18 @@ public class Patrul : IIdleBehaviour
         _targetPositions.Enqueue(_currentTarget);
 
         _currentTarget = _targetPositions.Dequeue();
+    }
+
+    public void CreatQuene()
+    {
+        _targetPositions = new Queue<Vector3>();
+
+        foreach (Transform target in _targets)
+            _targetPositions.Enqueue(target.position);
+
+        _currentTarget = _targetPositions.Dequeue();
+
+        Debug.Log("Я создал очередь");
     }
 
     public void IdleBehaviour()
