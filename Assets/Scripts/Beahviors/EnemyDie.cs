@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyDie : IReactionBehavior
+public class EnemyDie : IBehaviour
 {
     private bool _allowedCreate = true;
 
@@ -15,7 +15,7 @@ public class EnemyDie : IReactionBehavior
         _thisEnemy = enemy;
     }
 
-    public void ReactionBehaviour()
+    public void Update()
     {
         if (_allowedCreate)
         {

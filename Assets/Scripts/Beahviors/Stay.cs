@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class Stay : IIdleBehaviour
+public class Stay : IBehaviour
 {
-    public void IdleBehaviour()
+    public void Update()
     {
         Debug.Log("Я просто стою");
     }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RunAfterFromPlayer : IReactionBehavior
+public class RunAfterFromPlayer : IBehaviour
 {
     private PlayerMovement _player;
     private Transform _transform;
@@ -13,7 +13,7 @@ public class RunAfterFromPlayer : IReactionBehavior
         _speed = speed;
     }
 
-    public void ReactionBehaviour()
+    public void Update()
     {
         Vector3 direction = _player.transform.position - _transform.position;
 

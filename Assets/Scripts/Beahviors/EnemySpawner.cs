@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private EnemyBall _enemyBallPrefab;
+    [SerializeField] private Enemy _enemyBallPrefab;
     [SerializeField] private PlayerMovement _player;
 
     [SerializeField] private ParticleSystem _dieParticle;
@@ -11,10 +11,10 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private ReactionsToPlayer _reactionsToPlayer;
     [SerializeField] private BehaviorOfRest _restingsBehavior;
 
-    private EnemyBall _enemyBall;
+    private Enemy _enemyBall;
 
-    private IIdleBehaviour _idleBehaviour;
-    private IReactionBehavior _reactionBehavior;
+    private IBehaviour _iBehaviourIdle;
+    private IBehaviour _iBehaviourTrigger;
 
     private Transform[] _transformsList;
 
@@ -39,41 +39,9 @@ public class EnemySpawner : MonoBehaviour
         _walker = new Walker(_enemyBall.transform, 8);
         _patrul = new Patrol(_transformsListArray, _enemyBall.transform, 8);
         _stay = new Stay();
-        _runAwayFromPLayer = new RunAwayFromPLayer(_player, _enemyBall.transform, 8);
-        _runAfterFromPlayer = new RunAfterFromPlayer(_player, _enemyBall.transform, 8);
+        _runAwayFromPLayer = new RunAwayFromPLayer(_player, _enemyBall.transform, 4);
+        _runAfterFromPlayer = new RunAfterFromPlayer(_player, _enemyBall.transform, 4);
         _enemyDie = new EnemyDie(_dieParticle, _enemyBall.transform, _enemyBall.gameObject);
-
-        switch (_restingsBehavior)
-        {
-            case BehaviorOfRest.Stay:
-                _idleBehaviour = _stay;
-                break;
-
-            case BehaviorOfRest.Walking:
-                _idleBehaviour = _walker;
-                break;
-
-            case BehaviorOfRest.Patrol:
-                _idleBehaviour = _patrul;
-                break;
-        }
-
-        switch (_reactionsToPlayer)
-        {
-            case ReactionsToPlayer.RunAfterFromPlayer:
-                _reactionBehavior = _runAfterFromPlayer;
-                break;
-
-            case ReactionsToPlayer.RunAwayFromPlayer:
-                _reactionBehavior = _runAwayFromPLayer;
-                break;
-
-            case ReactionsToPlayer.Die:
-                _reactionBehavior = _enemyDie;
-                break;
-        }
-
-        _enemyBall.Initialize(_idleBehaviour, _reactionBehavior);
     }
     private void Start()
     {
@@ -81,5 +49,37 @@ public class EnemySpawner : MonoBehaviour
         {
             _patrul.CreatQuene();
         }
+
+        switch (_restingsBehavior)
+        {
+            case BehaviorOfRest.Stay:
+                _iBehaviourIdle = _stay;
+                break;
+
+            case BehaviorOfRest.Walking:
+                _iBehaviourIdle = _walker;
+                break;
+
+            case BehaviorOfRest.Patrol:
+                _iBehaviourIdle = _patrul;
+                break;
+        }
+
+        switch (_reactionsToPlayer)
+        {
+            case ReactionsToPlayer.RunAfterFromPlayer:
+                _iBehaviourTrigger = _runAfterFromPlayer;
+                break;
+
+            case ReactionsToPlayer.RunAwayFromPlayer:
+                _iBehaviourTrigger = _runAwayFromPLayer;
+                break;
+
+            case ReactionsToPlayer.Die:
+                _iBehaviourTrigger = _enemyDie;
+                break;
+        }
+
+        _enemyBall.Initialize(_iBehaviourIdle, _iBehaviourTrigger);
     }
 }

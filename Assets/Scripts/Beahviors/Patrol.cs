@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Patrol : IIdleBehaviour
+public class Patrol : IBehaviour
 {
     private const float MinDistanceToTarget = 0.05f;
     private float _speed;
@@ -44,7 +44,7 @@ public class Patrol : IIdleBehaviour
         Debug.Log("Я создал очередь");
     }
 
-    public void IdleBehaviour()
+    public void Update()
     {
         Vector3 direction = _currentTarget - _transform.position;
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Walker : IIdleBehaviour
+public class Walker : IBehaviour
 {
     private const float TimeToSwitchDirection = 1;
     private float _speed = 5;
@@ -9,7 +9,7 @@ public class Walker : IIdleBehaviour
     private Vector3 _currentTarget = new Vector3(0, 0, 1);
 
     private Transform _transform;
-    private EnemyBall _enemyBall;
+    private Enemy _enemyBall;
 
     public Walker(Transform transform, float speed)
     {
@@ -33,7 +33,7 @@ public class Walker : IIdleBehaviour
         return angles;
     }
 
-    public void IdleBehaviour()
+    public void Update()
     {
         _transform.Translate(_currentTarget * _speed * Time.deltaTime);
         SwitchTarget();

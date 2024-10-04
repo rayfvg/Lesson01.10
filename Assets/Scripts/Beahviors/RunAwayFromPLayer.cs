@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RunAwayFromPLayer : IReactionBehavior
+public class RunAwayFromPLayer : IBehaviour
 {
     private PlayerMovement _player;
     private Transform _transform;
@@ -13,9 +13,11 @@ public class RunAwayFromPLayer : IReactionBehavior
         _speed = speed;
     }
 
-    public void ReactionBehaviour()
+    public void Update()
     {
         Vector3 direction = _transform.position - _player.transform.position;
+
+        direction.y = 0;
 
         Vector3 normalizedDirection = direction.normalized;
 
